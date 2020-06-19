@@ -1,0 +1,80 @@
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+
+import javax.annotation.PostConstruct;
+import javax.inject.Inject;
+
+import org.apache.sling.api.SlingHttpServletRequest;
+import org.apache.sling.api.resource.Resource;
+import org.apache.sling.api.resource.ResourceResolver;
+import org.apache.sling.api.resource.ValueMap;
+import org.apache.sling.models.annotations.Model;
+import org.apache.sling.settings.SlingSettingsService;
+
+import com.day.cq.wcm.api.Page;
+import com.day.cq.wcm.api.PageManager;
+
+@Model(adaptables = SlingHttpServletRequest.class)
+public class ButtonModel {
+
+	@Inject
+	private Resource resource;
+
+	@Inject
+	SlingSettingsService slingSettingsService;
+
+	PageManager pageManager;
+
+	@Inject
+	private ResourceResolver resourceResolver;
+
+	private static final String BUTTON_TEXT = "buttonText";
+
+	private static final String BUTTON_VALUE = "buttonValue";
+
+	private static final String JCR_TITLE = "jcr:title";
+
+	List<Map> buttonList = new ArrayList<>();
+
+	boolean hasButton;
+
+	@PostConstruct
+	public void init() {
+		Resource listParent = resource.getChild("button");
+		if (null != listParent) {
+			Iterator<Resource> listIterator = listParent.listChildren();
+			hasButton = listIterator.hasNext();
+			pageManager = resourceResolver.adaptTo(PageManager.class);
+			while (listIterator.hasNext()) {
+				Resource child = listIterator.next();
+				ValueMap childMap = child.adaptTo(ValueMap.class);
+				if (null != childMap && null != pageManager) {
+					Map<String, String> hashMap = new LinkedHashMap<>();
+					Page page = pageManager.getPage(child.getPath());
+					if (null != page) {
+						ValueMap pageMap = page.getProperties();
+						hashMap.put(JCR_TITLE, page.getTitle());
+						hashMap.put(BUTTON_TEXT, (String) pageMap.get(BUTTON_TEXT));
+						hashMap.put(BUTTON_VALUE, (String) pageMap.get(BUTTON_VALUE));
+						buttonList.add(hashMap);
+					} else {
+						buttonList.add(childMap);
+					}
+
+				}
+			}
+		}
+	}
+
+	public List<Map> getButtons() {
+		return buttonList;
+	}
+
+	public boolean hasButton() {
+		return hasButton;
+	}
+
+}
