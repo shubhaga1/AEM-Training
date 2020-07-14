@@ -1,0 +1,173 @@
+@Self Annotation
+According to the documentation, this annotation injects the adaptable object itself. If the @Self annotation is present it is tried to adapt the adaptable to the field type.
+
+So anytime, when you need to extract some data from the request or resource in your model (like remote user id or parent resource path), you can create a model, which extract this information and then inject it with @Self into the model, where you need this information. The first model (which works with the external resource) can be treated as adapter. So you keep your logic in the model away from the external dependencies, because it’s adapter’s business, how to get some information from request/resource/etc.
+
+Project setup
+As a boilerplate, I’ve used this archetype, and then removed useless things:
+
+mvn archetype:generate -DarchetypeGroupId=com.adobe.granite.archetypes -DarchetypeArtifactId=aem-project-archetype -DarchetypeVersion=10 -DarchetypeRepository=https://repo.adobe.com/nexus/content/groups/public/
+1
+mvn archetype:generate -DarchetypeGroupId=com.adobe.granite.archetypes -DarchetypeArtifactId=aem-project-archetype -DarchetypeVersion=10 -DarchetypeRepository=https://repo.adobe.com/nexus/content/groups/public/
+@Self example
+Let’s imagine, that we need to get suffix from the request in our Sling Model. Then, depending on it, we will return different content. So we will create our first model – the one, which extracts suffix from the request:
+
+package com.taradevko.aem.model;
+
+import org.apache.sling.api.SlingHttpServletRequest;
+import org.apache.sling.models.annotations.Model;
+
+import javax.inject.Inject;
+
+@Model(adaptables = SlingHttpServletRequest.class)
+public class RequestAdapter {
+
+    @Inject
+    private SlingHttpServletRequest request;
+
+    public String getSuffix() {
+        return request.getRequestPathInfo().getSuffix();
+    }
+}
+1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+14
+15
+16
+17
+package com.taradevko.aem.model;
+ 
+import org.apache.sling.api.SlingHttpServletRequest;
+import org.apache.sling.models.annotations.Model;
+ 
+import javax.inject.Inject;
+ 
+@Model(adaptables = SlingHttpServletRequest.class)
+public class RequestAdapter {
+ 
+    @Inject
+    private SlingHttpServletRequest request;
+ 
+    public String getSuffix() {
+        return request.getRequestPathInfo().getSuffix();
+    }
+}
+There we inject the request we adapted this model from and one method for returning suffix. Now we are ready to use @Self annotation:
+
+package com.taradevko.aem.model;
+
+import org.apache.sling.api.SlingHttpServletRequest;
+import org.apache.sling.models.annotations.Model;
+import org.apache.sling.models.annotations.injectorspecific.Self;
+
+import java.util.HashMap;
+import java.util.Map;
+
+@Model(adaptables = SlingHttpServletRequest.class)
+public class SelfModel {
+
+    private static final Map<String, String> CONTENT = new HashMap<>();
+    static {
+        CONTENT.put("/suffix1", "Content 1");
+        CONTENT.put("/suffix2", "Content 2");
+    }
+
+    @Self
+    private RequestAdapter requestAdapter;
+
+    public String getContent() {
+        return CONTENT.get(requestAdapter.getSuffix());
+    }
+}
+1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+14
+15
+16
+17
+18
+19
+20
+21
+22
+23
+24
+25
+package com.taradevko.aem.model;
+ 
+import org.apache.sling.api.SlingHttpServletRequest;
+import org.apache.sling.models.annotations.Model;
+import org.apache.sling.models.annotations.injectorspecific.Self;
+ 
+import java.util.HashMap;
+import java.util.Map;
+ 
+@Model(adaptables = SlingHttpServletRequest.class)
+public class SelfModel {
+ 
+    private static final Map<String, String> CONTENT = new HashMap<>();
+    static {
+        CONTENT.put("/suffix1", "Content 1");
+        CONTENT.put("/suffix2", "Content 2");
+    }
+ 
+    @Self
+    private RequestAdapter requestAdapter;
+ 
+    public String getContent() {
+        return CONTENT.get(requestAdapter.getSuffix());
+    }
+}
+Let’s go through the code snippet above:
+
+we have a static map with demo content where the key is the suffix we expect to get from the user;
+we inject RequestAdapter using @Self annotation;
+method getContent, where we use our request adapter.
+Finally, we will add next HTL markup to our component:
+
+<pre data-sly-use.model="com.taradevko.aem.model.SelfModel">
+    Your suffix brought next content:
+    ${model.content}
+</pre>
+1
+2
+3
+4
+<pre data-sly-use.model="com.taradevko.aem.model.SelfModel">
+    Your suffix brought next content:
+    ${model.content}
+</pre>
+There we just initialize our model, call getter method on it and display the result. Let’s test it:
+
+aem cq sling models @self annotation
+
+As you can see, we got the string which has been mapped for the suffix /suffix1, so it works!
+
+P.S.: will be happy to get questions from you and see you soon.
+
+You can find the complete code in this GitHub repo.
+
+
+https://github.com/otarsko/sling-models-self-annotation-example
