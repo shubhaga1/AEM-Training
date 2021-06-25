@@ -1,0 +1,77 @@
+
+
+
+SSH steps dispatcher Port 22
+
+ 
+// logs
+cd /etc/httpd/logs
+// tail
+tail -f dispatcher.log | grep 'text' -a2 -b2
+
+// clear the cache 
+cd /mnt/var/www/html/content/inside
+sudo rm -rf us
+ 
+
+
+// view vhost
+vi /etc/httpd/conf.d/available_vhosts/tmp_timeout.vhost
+(Enabled is symlink of available)
+
+
+//important path
+cd /etc/httpd/conf.d/abc-hr-extra
+sudo vi abc_hr_header.rules
+
+
+// test configs
+apachectl configtest
+
+// not sure of this test once
+service httpd configtest
+Service httpd reload
+
+// restart dispatcher
+sudo systemctl reload httpd.service
+
+
+
+
+
+
+alias ..='cd ..'
+alias ...='cd ../../../'
+alias ....='cd ../../../../'
+alias .....='cd ../../../../'
+alias .4='cd ../../../../'
+alias .5='cd ../../../../..'
+alias be='sudo su - '
+alias cdcrx='cd /mnt/crx/*/crx-quickstart'
+alias cdlogs='cd /mnt/crx/*/crx-quickstart/logs'
+alias cp='cp -i'
+alias ctailerror='functionctail -f /var/log/aem/error.log'
+alias egrep='egrep --color=auto'
+alias fgrep='fgrep --color=auto'
+alias grep='grep --color=auto'
+alias javaps='ps -fC java | sed -r '\''s/(\s\-.)/\n\1/g'\'''
+alias l.='ls -d .* --color=auto'
+alias lastreboot='uptime -s'
+alias ll='ls -l --color=auto'
+alias ls='ls --color=auto'
+alias lsd='ls -d1 */'
+alias ltr='ls -ltrhF'
+alias mypip='curl http://ipecho.net/plain ; echo'
+alias servicerestart='service cq5 restart'
+alias servicestart='service cq5 start'
+alias servicestatus='service cq5 status'
+alias servicestop='service cq5 stop'
+alias stopcq='pid=`pgrep -u crx -f java.*/cq-` && kill $pid && time tail -n0 -f --pid $pid /mnt/crx/*/crx-quickstart/logs/error.log'
+alias tailaccess='tail -f /var/log/aem/access.log'
+alias tailerror='tail -f /var/log/aem/error.log'
+alias tarlogs='functiontarlogs'
+alias updatealias='salt-call state.apply /contrib/cse/install-alias'
+alias utpid='ps -o etime= -p'
+alias vi='vim'
+alias whatbucket='grep s3Bucket /mnt/crx/*/crx-quickstart/install/org.apache.jackrabbit.oak.plugins.blob.datastore.SharedS3DataStore.config'
+alias which='alias | /usr/bin/which --tty-only --read-alias --show-dot --show-tilde'
