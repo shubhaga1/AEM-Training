@@ -1,0 +1,14 @@
+
+// check the runmode.
+
+private boolean isPublish() {
+  if (slingSettingsService != null) {
+     Set<String> runModes = slingSettingsService.getRunModes();
+     for (String runMode : runModes) {
+         if (runMode.toLowerCase().equals("publish")) {
+             return true;
+         }
+     }
+  }
+  return false;
+}
