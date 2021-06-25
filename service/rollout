@@ -1,0 +1,9 @@
+// get language master from path
+
+String[] jcrContentSplit = jcrContentNode.getPath().split("/");
+String temp = jcrContentSplit[3];
+String languageMasterPath = jcrContentNode.getPath().replace(temp,"language-master");
+Resource languageMasterResource = resourceResolver.getResource(languageMasterPath);
+if (languageMasterResource != null) {
+
+}
