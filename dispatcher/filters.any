@@ -1,0 +1,19 @@
+/0050 { /type "allow" /url "/etc/clientlibs/*" }  # allow etc client libraries
+/0051 { /type "allow" /url "/etc/designs/*" }  # allow etc client libraries
+/0052 { /type "allow" /url "/etc/cloudsettings/*" }  # allow etc cloudsettings to load context hub
+/0053 { /type "allow" /url "/etc/segmentation/*" }  # allow etc segmentation
+/0054 { /type "allow" /url "/etc/amazon-hr/*" }  # allow custom generic lists under /etc
+/0055 { /type "allow" /url "*/saml_login" }  # allow sso through saml_login
+/0056 { /type "deny"  /glob "GET *_jcr_content.feed*"      } #deny content feed grab as found in security test
+/0057 { /type "deny"  /glob "GET *jcr:content.feed*"      } #deny content feed grab as found in security test
+
+/0058 { /type "allow" /glob "* /crx/packmgr/service.jsp*"    }  # allow content repository -  enabling crx for build deployment through code pipeline
+/0059 { /type "allow" /extension '(pdf|docx|xlsx|xls|mp4|pptx|tif|tiff|gif|jpeg|jpg|jif|jfif|jp2|jpx|j2k|j2c|fpx|pcd|png|PDF|DOCX|XLSX|XLS|MP4|PPTX|TIF|TIFF|GIF|JPEG|JPG|JIF|JFIF|JP2|JPX|J2K|J2C|FPX|PCD|PNG|txt|TXT|doc|DOC|XLSM|xlsm|MSG|msg|OFT|oft|ppt|PPT)' /path "/content/*" }  ##enabling request to dam assets
+
+/0060 { /type "allow" /selectors '(changeHistoryDetails|model|copies|insidecopies|inavigation)' /extension '(json)' }
+
+// Extension, path in one filter
+/0090  { /type "deny"  /extension 'html' /path "/content/*/language-master/*" } #deny content from language-master
+
+
+/0093 { /type "allow" /extension '(zip|ZIP)' /path "/content/dam/*" }  ##E328037722- enabling request to dam assets with zip extension
