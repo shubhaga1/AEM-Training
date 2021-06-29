@@ -1,0 +1,36 @@
+#author
+"authorization"
+"proxy-authorization"
+"proxy-connection"
+"cq-action"
+"cq-handle"
+"handle"
+"action"
+"cqstats"
+"dav"
+"ms-author-via"
+"x-destination"
+"x-depth"
+"x-overwrite"
+
+
+
+# publish
+#Custom amazon hr client headers to be forwarded to aem publish
+#allowing authorization header to be passed to publish so that build can be deployed through aws codebuild 
+#otherwise build installation fails; not requried for production
+"authorization"
+"CloudFront-Viewer-Country"
+
+
+##Any livecycle specific clientheaders go here
+"authorization"
+"proxy-authorization"
+"proxy-connection"
+"cq-action"
+"cq-handle"
+"handle"
+"action"
+"cqstats"
+"dav"
+"ms-author-via"
