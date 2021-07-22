@@ -1,0 +1,58 @@
+sshpass -p TGRwVVukXMuFRHx8 ssh-copy-id -i key.pub shbgarg@44.241.144.193
+
+
+Step 1 - ssh-keygen (1qaz!QAZ) 
+
+Step 2 - brew install hudochenkov/sshpass/sshpass 
+
+Step 3 - create user.sh in the /Users/rnjankr with below content 
+
+    #!/usr/local/bin/bash  
+
+    SSH_USERNAME=$1 SSH_KEY=$2 IP_LIST=$3  
+
+    usage(){  
+
+    echo " This script will take the username, password, pem file and a file containing a list of instance IPs. It will iterate through the IP list and copy the ssh key to each of the /home/username of instances. Usage: add_user_pem.sh <username> <path to id_rsa or pem file> <path to file containing list of IPs> " }  
+
+    if [ $# -lt 3 ]  
+
+    then  
+
+    usag  
+
+    exit  
+
+    fi  
+
+    #read -s -p "Enter password for ${SSH_USERNAME} : " SSH_PASSWORD  
+
+    echo "$IP_LIST"  
+
+    while IFS=','  
+
+    read -a line  
+
+    do  
+
+    echo "${line[0]} and password is ${line[1]}"  
+
+    echo "sshpass -p ${line[1]} ssh-copy-id -i ${SSH_KEY} ${SSH_USERNAME}@${line[0]} "  
+
+    sshpass -p ${line[1]} ssh-copy-id -i ${SSH_KEY} ${SSH_USERNAME}@${line[0]}  
+
+    done < $IP_LIST  
+
+    echo "done"  
+
+ 
+
+Create instance-ips.txt and add ips with password like below: 
+ 
+
+
+ 
+
+Step 3 - Run sh add_user_pem.sh rnjankr ~/.ssh/rnjankr.pub ./instance-ips.txt which installs the ssh pem file on each server 
+
+Test the connection via the commands in config file like ssh dev65a. Sample config file placed under /Users/rnjankr/.ssh/config looks like below: 
